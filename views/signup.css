@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(rgb(33, 6, 41), rgb(94, 3, 117), rgb(32, 6, 37));
+}
+.back {
+  background: url("./../images/compas.png");
+  height: 600px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.main {
+  width: 350px;
+  height: 530px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 5px 20px 50px black;
+  background: linear-gradient(rgb(6, 6, 41), rgb(24, 3, 117), rgb(6, 6, 37));
+}
+
+#chk {
+  display: none;
+}
+.signup {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+label {
+  color: #fff;
+  font-size: 2.3rem;
+  justify-content: center;
+  display: flex;
+  margin: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.4s ease-in-out;
+}
+input {
+  width: 60%;
+  height: 20px;
+  background: #e0dede;
+  justify-content: center;
+  display: flex;
+  margin: 20px auto;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+}
+button {
+  width: 65%;
+  height: 40px;
+  background: #573b8a;
+  color: #fff;
+  justify-content: center;
+  margin: 10px auto;
+  display: block;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  transition: 0.3s ease-in;
+  cursor: pointer;
+}
+button:hover {
+  background: #7952c2;
+}
+.login {
+  height: 560px;
+  background-color: white;
+  border-radius: 50% / 10%;
+  transform: translateY(-200px);
+  transition: 0.5s ease-in-out;
+}
+.login label {
+  color: #573b8a;
+  transform: scale(0.7);
+  padding: 20px;
+}
+#chk:checked ~ .login {
+  transform: translateY(-570px);
+}
+#chk:checked ~ .login label {
+  transform: scale(1);
+}
+
+#chk:checked ~ .signup label {
+  transform: scale(0.6);
+}
