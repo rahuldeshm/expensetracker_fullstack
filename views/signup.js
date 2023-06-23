@@ -30,5 +30,9 @@ function loginHandler(e) {
     })
     .then((res) => {
       console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      alert(err);
     });
 }
