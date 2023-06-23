@@ -1,0 +1,18 @@
+{
+  "name": "expensetracker_fullstack",
+  "version": "1.0.0",
+  "description": "This is expense tracker to track the expenses",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "Rahul deshmukh",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.4.0",
+    "sequelize": "^6.32.1"
+  }
+}
