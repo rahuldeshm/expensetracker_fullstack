@@ -83,7 +83,7 @@ button:hover {
 .login label {
   color: #573b8a;
   transform: scale(0.7);
-  padding: 20px;
+  padding: 15px;
 }
 #chk:checked ~ .login {
   transform: translateY(-32rem);
