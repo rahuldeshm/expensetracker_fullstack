@@ -9,14 +9,14 @@ body {
 }
 .back {
   background: url("./../images/compas.png");
-  height: 600px;
+  height: 33rem;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 .main {
-  width: 350px;
-  height: 530px;
+  width: 22rem;
+  height: 32rem;
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 5px 20px 50px black;
@@ -74,10 +74,10 @@ button:hover {
   background: #7952c2;
 }
 .login {
-  height: 560px;
+  height: 32rem;
   background-color: white;
   border-radius: 50% / 10%;
-  transform: translateY(-200px);
+  transform: translateY(-8.5rem);
   transition: 0.5s ease-in-out;
 }
 .login label {
@@ -86,7 +86,7 @@ button:hover {
   padding: 20px;
 }
 #chk:checked ~ .login {
-  transform: translateY(-570px);
+  transform: translateY(-32rem);
 }
 #chk:checked ~ .login label {
   transform: scale(1);

@@ -11,6 +11,13 @@ function signUpHandler(e) {
       })
       .then((res) => {
         console.log(res.data);
+        document.getElementById("username").value = "";
+        document.getElementById("semail").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("spassword").value = "";
+        document.getElementById("scpassword").value = "";
+        document.getElementById("chk").checked = true;
+        alert("Successfully created account login to continue.");
       })
       .catch((err) => {
         console.log(err);
@@ -30,6 +37,9 @@ function loginHandler(e) {
     })
     .then((res) => {
       console.log(res.data);
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
+      alert("Login successful.");
     })
     .catch((err) => {
       console.log(err);
