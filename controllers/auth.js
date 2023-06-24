@@ -49,7 +49,10 @@ exports.signin = (req, res, next) => {
         req.body.password,
         result.password,
         async (err, response) => {
-          if (!err) {
+          if (err) {
+            throw new Error("something went wrong");
+          }
+          if (response === true) {
             res.json({ message: "Login Successful" });
           } else {
             res.status(401).json({ err: "User not authorized" });

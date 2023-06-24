@@ -40,6 +40,8 @@ function loginHandler(e) {
       document.getElementById("email").value = "";
       document.getElementById("password").value = "";
       alert("Login successful.");
+      window.location.href =
+        "C:/Users/RAHUL/Desktop/Express/expense_tracker/views/expense.html";
     })
     .catch((err) => {
       console.log(err);
