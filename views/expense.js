@@ -1,5 +1,6 @@
 // console.log("rahul")
 var editid;
+const token = JSON.parse(localStorage.getItem("token"));
 var form = document.getElementById("addForm");
 var expancelist = document.getElementById("expances");
 form.addEventListener("submit", addExpance);
@@ -16,34 +17,27 @@ function addExpance(e) {
     description: newdiscription,
     categary: newcategery,
   };
-  if (editid) {
-    axios
-      .post("http://localhost:3000/expense/expenses", myObj)
-      .then((response) => {
-        showondom(response.data);
-        editid = null;
-        document.getElementById("amount").value = "";
-        document.getElementById("discription").value = "";
-        document.getElementById("categery").value = "";
-      })
-      .catch((err) => console.log(err));
-  } else {
-    axios
-      .post("http://localhost:3000/expense/expenses", myObj)
-      .then((response) => {
-        showondom(response.data);
-        document.getElementById("amount").value = "";
-        document.getElementById("discription").value = "";
-        document.getElementById("categery").value = "";
-      })
-      .catch((err) => console.log(err));
-  }
+
+  axios
+    .post("http://localhost:3000/expense/expenses", myObj, {
+      headers: { authorisation: token.token },
+    })
+    .then((response) => {
+      showondom(response.data);
+      editid = null;
+      document.getElementById("amount").value = "";
+      document.getElementById("discription").value = "";
+      document.getElementById("categery").value = "";
+    })
+    .catch((err) => console.log(err));
 }
 document.addEventListener("DOMContentLoaded", fatchlocaldata);
 function fatchlocaldata() {
   // let datakeys = Object.keys(localStorage);
   axios
-    .get("http://localhost:3000/expense/expenses")
+    .get("http://localhost:3000/expense/expenses", {
+      headers: { authorisation: token.token },
+    })
     .then((response) => {
       // data=response;
       console.log(response.data);
@@ -58,13 +52,13 @@ function fatchlocaldata() {
 function showondom(Obj) {
   console.log("showondom");
   var li = document.createElement("div");
-  li.classList.add("form", "rounded", "border", "shadow", "p-4");
+  li.classList.add("liitem");
   const deletebtn = document.createElement("button");
   const editbtn = document.createElement("button");
   deletebtn.className = "dbtn";
-  deletebtn.innerHTML = "Delete Expance";
+  deletebtn.innerHTML = "Delete";
   editbtn.className = "ebtn";
-  editbtn.innerHTML = "Edit Expance";
+  editbtn.innerHTML = "Edit";
   li.innerHTML =
     " Expance amount : " +
     Obj.price +
@@ -81,7 +75,9 @@ function showondom(Obj) {
   deletebtn.onclick = () => {
     let lin = `http://localhost:3000/expense/expenses/${Obj.id}`;
     axios
-      .delete(lin)
+      .delete(lin, {
+        headers: { authorisation: token.token },
+      })
       .then((response) => {
         expancelist.removeChild(li);
       })

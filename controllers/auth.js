@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 function isStringInvalid(string) {
   if (string == undefined || string.length == 0) {
     return true;
@@ -53,7 +54,11 @@ exports.signin = (req, res, next) => {
             throw new Error("something went wrong");
           }
           if (response === true) {
-            res.json({ message: "Login Successful" });
+            const token = jwt.sign(
+              { id: result.id, username: result.username },
+              "thisisthetokenwhichnevershouldexposedasitcangetthevalue"
+            );
+            res.json({ message: "Login Successful", token });
           } else {
             res.status(401).json({ err: "User not authorized" });
           }

@@ -1,7 +1,9 @@
+const Expense = require("../models/expense");
 const Expneses = require("../models/expense");
 
 exports.getExpenses = (req, res, next) => {
-  Expneses.findAll()
+  req.user
+    .getExpenses()
     .then((rows) => {
       res.json(rows);
     })
@@ -12,10 +14,10 @@ exports.getExpenses = (req, res, next) => {
 };
 
 exports.addExpense = (req, res, next) => {
-  const { price, description, categary } = req.body;
-  Expneses.create({ price, description, categary })
+  const { id, price, description, categary } = req.body;
+  console.log(req.user.id, ",,,header");
+  Expense.create({ price, description, categary, userId: req.user.id })
     .then((result) => {
-      console.log(result.id); // Access the insertId property
       res.json({
         id: result.id,
         price,
@@ -31,8 +33,7 @@ exports.addExpense = (req, res, next) => {
 
 exports.deleteExpense = (req, res, next) => {
   const prodId = req.params.userId;
-  console.log(prodId);
-  Expneses.destroy({ where: { id: prodId } })
+  Expense.destroy({ where: { id: prodId, userId: req.user.id } })
     .then((rows) => {
       console.log("sussfully deleted", rows);
       res.json({
