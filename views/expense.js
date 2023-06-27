@@ -1,5 +1,5 @@
 // console.log("rahul")
-var editid;
+let editid;
 const token = JSON.parse(localStorage.getItem("token"));
 
 var form = document.getElementById("addForm");
@@ -19,7 +19,7 @@ function addExpance(e) {
     description: newdiscription,
     categary: newcategery,
   };
-
+  console.log(myObj);
   axios
     .post("http://localhost:3000/expense/expenses", myObj, {
       headers: { authorisation: token.token },

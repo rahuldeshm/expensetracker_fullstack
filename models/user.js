@@ -13,6 +13,7 @@ const User = sequelize.define("user", {
   phone: Sequelize.STRING,
   password: Sequelize.STRING,
   ispremium: Sequelize.BOOLEAN,
+  total: Sequelize.INTEGER,
 });
 
 module.exports = User;
