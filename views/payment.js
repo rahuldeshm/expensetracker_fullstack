@@ -1,7 +1,7 @@
 const raserbtn = document.getElementById("premium");
 if (token.ispremium) {
   raserbtn.innerHTML = "Premium User";
-  raserbtn.className = "ebtn";
+  raserbtn.className = "pbtn";
   document.getElementById("leaderboard").className = "card";
 }
 raserbtn.addEventListener("click", raserHandler);
@@ -37,7 +37,7 @@ async function raserHandler(e) {
           localStorage.setItem("token", JSON.stringify(newtoken));
           document.getElementById("leaderboard").className = "card";
           document.getElementById("premium").innerHTML = "Premium User";
-          document.getElementById("premium").className = "ebtn";
+          document.getElementById("premium").className = "pbtn";
           alert(updateres.data.message);
         },
       };
