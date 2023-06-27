@@ -9,19 +9,22 @@
   <body>
     <div class="header">
       <h4>Expense Tracker App</h4>
-      <a href="signup.html">
-        <button class="dbtn">Logout</button>
-      </a>
+      <div>
+        <a href="signup.html">
+          <button class="dbtn">Logout</button>
+        </a>
+        <button id="premium" class="ebtn">Premium</button>
+      </div>
     </div>
     <div class="container">
       <div id="main" class="card">
-        <h3 class="title">Add EXPANCES</h3>
+        <h3 class="title">Add EXPENSES</h3>
         <form id="addForm" class="form">
-          <label for="amount">Choose Expance Amount:</label><br />
+          <label for="amount">Choose Expense Amount:</label><br />
           <input type="number" id="amount" />
-          <label for="discription">choose Discription:</label><br />
+          <label for="discription">choose Description:</label><br />
           <input type="text" id="discription" />
-          <label for="categery">Choose Catagery:</label><br />
+          <label for="categery">Choose Category:</label><br />
           <select id="categery">
             <option value="Movies">Movies</option>
             <option value="Food">Food</option>
@@ -32,11 +35,13 @@
         </form>
       </div>
       <div class="card">
-        <h3 class="title">EXPANCES</h3>
+        <h3 class="title">EXPENSES</h3>
         <ul id="expances"></ul>
       </div>
     </div>
     <script src="expense.js"></script>
+    <script src="payment.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
   </body>
 </html>

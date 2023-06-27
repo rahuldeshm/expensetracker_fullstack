@@ -1,5 +1,4 @@
 const Expense = require("../models/expense");
-const Expneses = require("../models/expense");
 
 exports.getExpenses = (req, res, next) => {
   req.user
@@ -15,20 +14,37 @@ exports.getExpenses = (req, res, next) => {
 
 exports.addExpense = (req, res, next) => {
   const { id, price, description, categary } = req.body;
-  console.log(req.user.id, ",,,header");
-  Expense.create({ price, description, categary, userId: req.user.id })
-    .then((result) => {
-      res.json({
-        id: result.id,
-        price,
-        description,
-        categary,
+  if (id) {
+    Expense.findByPk(id)
+      .then((expense) => {
+        expense.price = price;
+        expense.description = description;
+        expense.categary = categary;
+        return expense.save();
+      })
+      .then((result) => {
+        res.json({ id, price, description, categary });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: err });
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
+  } else {
+    console.log(req.user.id, ",,,header");
+    Expense.create({ price, description, categary, userId: req.user.id })
+      .then((result) => {
+        res.json({
+          id: result.id,
+          price,
+          description,
+          categary,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: err });
+      });
+  }
 };
 
 exports.deleteExpense = (req, res, next) => {

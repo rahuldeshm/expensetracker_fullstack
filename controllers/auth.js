@@ -56,7 +56,7 @@ exports.signin = (req, res, next) => {
           if (response === true) {
             const token = jwt.sign(
               { id: result.id, username: result.username },
-              "thisisthetokenwhichnevershouldexposedasitcangetthevalue"
+              process.env.token_key
             );
             res.json({ message: "Login Successful", token });
           } else {
