@@ -105,3 +105,15 @@ select {
   background-color: rgb(85, 11, 87);
   border-radius: 5px;
 }
+.leader {
+  list-style: none;
+  margin: 5px;
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(85, 11, 87);
+  border-radius: 5px;
+}
+.nodisplay {
+  display: none;
+}

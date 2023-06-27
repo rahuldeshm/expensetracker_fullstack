@@ -1,8 +1,10 @@
 // console.log("rahul")
 var editid;
 const token = JSON.parse(localStorage.getItem("token"));
+
 var form = document.getElementById("addForm");
 var expancelist = document.getElementById("expances");
+var leaderlist = document.getElementById("leader");
 form.addEventListener("submit", addExpance);
 function addExpance(e) {
   e.preventDefault();
@@ -33,7 +35,9 @@ function addExpance(e) {
 }
 document.addEventListener("DOMContentLoaded", fatchlocaldata);
 function fatchlocaldata() {
-  // let datakeys = Object.keys(localStorage);
+  if (token.ispremium) {
+    fetchleaderbord();
+  }
   axios
     .get("http://localhost:3000/expense/expenses", {
       headers: { authorisation: token.token },
@@ -93,4 +97,37 @@ function showondom(Obj) {
     document.getElementById("categery").value = Obj.categary;
     expancelist.removeChild(li);
   };
+}
+
+function fetchleaderbord() {
+  axios
+    .get("http://localhost:3000/premium/leaderboard", {
+      headers: { authorisation: token.token },
+    })
+    .then((response) => {
+      // data=response;
+      console.log(response.data);
+      response.data.map((e) => {
+        showonLeader(e);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function showonLeader(Obj) {
+  console.log("showonleader");
+  var li = document.createElement("div");
+  li.classList.add("leader");
+  li.innerHTML =
+    "<p>" +
+    " User Name : " +
+    Obj.username +
+    "</p>" +
+    "<p>" +
+    " Expense : " +
+    Obj.total +
+    "</p>";
+  leaderlist.appendChild(li);
 }

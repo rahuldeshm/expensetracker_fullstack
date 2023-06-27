@@ -8,6 +8,7 @@ const Expense = require("./models/expense");
 const User = require("./models/user");
 const paymentRoutes = require("./routes/payment");
 const Order = require("./models/order");
+const premiumRoutes = require("./routes/premium");
 require("dotenv").config();
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(bodyParser.json({ extended: true }));
 app.use("/auth", authRoutes);
 app.use("/expense", expenseRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/premium", premiumRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

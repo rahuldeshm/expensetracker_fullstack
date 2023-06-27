@@ -58,7 +58,12 @@ exports.signin = (req, res, next) => {
               { id: result.id, username: result.username },
               process.env.token_key
             );
-            res.json({ message: "Login Successful", token });
+            res.json({
+              message: "Login Successful",
+              ispremium: result.ispremium,
+              username: result.username,
+              token,
+            });
           } else {
             res.status(401).json({ err: "User not authorized" });
           }

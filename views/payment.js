@@ -1,7 +1,15 @@
 const raserbtn = document.getElementById("premium");
+if (token.ispremium) {
+  raserbtn.innerHTML = "Premium User";
+  raserbtn.className = "ebtn";
+  document.getElementById("leaderboard").className = "card";
+}
 raserbtn.addEventListener("click", raserHandler);
 async function raserHandler(e) {
   e.preventDefault();
+  if (token.ispremium) {
+    return;
+  }
   try {
     const response = await axios.post(
       "http://localhost:3000/payment/createorder",
@@ -24,15 +32,20 @@ async function raserHandler(e) {
             },
             { headers: { authorisation: token.token } }
           );
+          const newtoken = { ...token };
+          newtoken.ispremium = true;
+          localStorage.setItem("token", JSON.stringify(newtoken));
+          document.getElementById("leaderboard").className = "card";
+          document.getElementById("premium").innerHTML = "Premium User";
+          document.getElementById("premium").className = "ebtn";
           alert(updateres.data.message);
         },
       };
       const rzpl = new Razorpay(options);
       rzpl.open();
-      rzpl.on("payment.failed", async function (response) {
-        console.log(response);
+      rzpl.on("payment.failed", async function () {
         try {
-          const updateres = await axios.post(
+          const updatere = await axios.post(
             "http://localhost:3000/payment/update",
             {
               order_id: options.order_id,
@@ -40,8 +53,7 @@ async function raserHandler(e) {
             },
             { headers: { authorisation: token.token } }
           );
-
-          alert(updateres.data.message);
+          alert(updatere.data.message);
         } catch (err) {
           alert(err);
         }

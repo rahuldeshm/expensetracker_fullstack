@@ -37,7 +37,7 @@ function loginHandler(e) {
     })
     .then((res) => {
       console.log(res.data);
-      localStorage.setItem("token", JSON.stringify({ token: res.data.token }));
+      localStorage.setItem("token", JSON.stringify(res.data));
       document.getElementById("email").value = "";
       document.getElementById("password").value = "";
       alert("Login successful.");
