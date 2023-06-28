@@ -80,7 +80,7 @@ function showondom(Obj) {
     let lin = `http://localhost:3000/expense/expenses/${Obj.id}`;
     axios
       .delete(lin, {
-        headers: { authorisation: token.token },
+        headers: { authorisation: token.token, price: Obj.price },
       })
       .then((response) => {
         expancelist.removeChild(li);

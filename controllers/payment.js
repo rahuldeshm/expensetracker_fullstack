@@ -1,5 +1,6 @@
 const Order = require("../models/order");
 const Razorpay = require("razorpay");
+const sequelize = require("../util/database");
 exports.createOrder = async (req, res, next) => {
   console.log("createorder");
   try {
@@ -27,32 +28,39 @@ exports.createOrder = async (req, res, next) => {
 };
 
 exports.updateOrder = async (req, res, next) => {
+  const t = await sequelize.transaction();
   console.log("update Order");
   try {
     const order = await Order.findOne({
       where: { orderId: req.body.order_id, userId: req.user.id },
     });
-    const promise1 = order.update({
-      paymentId: req.body.payment_id,
-      status: req.body.payment_id === null ? "FAILED" : "SUCCESS",
-    });
+    const promise1 = order.update(
+      {
+        paymentId: req.body.payment_id,
+        status: req.body.payment_id === null ? "FAILED" : "SUCCESS",
+      },
+      { transaction: t }
+    );
     const promiseList = [promise1];
     if (req.body.payment_id !== null) {
-      const promise2 = req.user.update({ ispremium: true });
+      const promise2 = req.user.update({ ispremium: true }, { transaction: t });
       promiseList.push(promise2);
     }
     Promise.all(promiseList)
-      .then(() => {
+      .then(async () => {
+        await t.commit();
         if (req.body.payment_id !== null) {
           return res.status(201).json({ message: "You Are Premium user now" });
         } else {
           return res.status(401).json({ message: "Payment Failed" });
         }
       })
-      .catch((err) => {
+      .catch(async (err) => {
+        await t.rollback();
         throw new Error(err);
       });
   } catch (err) {
+    await t.rollback();
     res.status(401).json({ message: err });
   }
 };
