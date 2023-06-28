@@ -57,6 +57,7 @@
             </form>
           </div>
           <div class="login">
+            <input type="checkbox" id="fpp" aria-hidden="true" checked="true" />
             <form onsubmit="loginHandler(event)">
               <label for="chk" aria-hidden="true">Login</label>
               <input
@@ -75,6 +76,19 @@
               />
 
               <button type="submit">Login</button>
+            </form>
+            <label for="fpp" class="forgotpass" aria-hidden="true"
+              >Forgot Password</label
+            >
+            <form class="forgotform" onsubmit="forgotHandler(event)">
+              <input
+                id="femail"
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                required
+              />
+              <button type="submit">Send Link</button>
             </form>
           </div>
         </div>

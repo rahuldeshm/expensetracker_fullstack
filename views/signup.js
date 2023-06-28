@@ -48,3 +48,17 @@ function loginHandler(e) {
       alert(err);
     });
 }
+async function forgotHandler(e) {
+  e.preventDefault();
+  try {
+    const res = await axios.post("http://localhost:3000/auth/forgot", {
+      email: e.target.email.value,
+    });
+    console.log(res.data);
+    alert("Link Sent Successfully....");
+    document.getElementById("fpp").checked = false;
+  } catch (err) {
+    console.log(err);
+    alert("Email couldn't Sent...");
+  }
+}

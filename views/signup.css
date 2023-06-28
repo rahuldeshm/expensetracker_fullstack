@@ -36,7 +36,8 @@ body {
   background: linear-gradient(rgb(6, 6, 41), rgb(24, 3, 117), rgb(6, 6, 37));
 }
 
-#chk {
+#chk,
+#fpp {
   display: none;
 }
 .signup {
@@ -60,7 +61,7 @@ input {
   background: #e0dede;
   justify-content: center;
   display: flex;
-  margin: 20px auto;
+  margin: 10px auto;
   padding: 10px;
   border: none;
   outline: none;
@@ -72,9 +73,9 @@ button {
   background: #573b8a;
   color: #fff;
   justify-content: center;
-  margin: 10px auto;
+  margin: 5px auto;
   display: block;
-  padding: 12px;
+  padding: 6px;
   border-radius: 5px;
   font-size: 1rem;
   font-weight: bold;
@@ -90,21 +91,31 @@ button:hover {
   height: 32rem;
   background-color: white;
   border-radius: 50% / 10%;
-  transform: translateY(-8.5rem);
+  transform: translateY(-10.5rem);
   transition: 0.5s ease-in-out;
 }
 .login label {
   color: #573b8a;
-  transform: scale(0.7);
-  padding: 15px;
+  padding: 30px;
 }
 #chk:checked ~ .login {
   transform: translateY(-32rem);
 }
 #chk:checked ~ .login label {
-  transform: scale(1);
+  padding: 15px;
 }
 
 #chk:checked ~ .signup label {
   transform: scale(0.6);
+}
+
+#fpp:checked ~ .forgotform {
+  display: none;
+}
+#fpp:checked .login label:not(.sibling-label) {
+  padding: 30px;
+}
+.forgotpass {
+  font-size: 1rem;
+  margin: 4px;
 }
