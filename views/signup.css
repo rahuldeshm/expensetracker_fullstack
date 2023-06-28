@@ -109,11 +109,11 @@ button:hover {
   transform: scale(0.6);
 }
 
-#fpp:checked ~ .forgotform {
+.forgotform {
   display: none;
 }
-#fpp:checked .login label:not(.sibling-label) {
-  padding: 30px;
+#fpp:checked ~ .forgotform {
+  display: block;
 }
 .forgotpass {
   font-size: 1rem;

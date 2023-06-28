@@ -56,7 +56,7 @@ async function forgotHandler(e) {
     });
     console.log(res.data);
     alert("Link Sent Successfully....");
-    document.getElementById("fpp").checked = false;
+    document.getElementById("fpp").checked = true;
   } catch (err) {
     console.log(err);
     alert("Email couldn't Sent...");
