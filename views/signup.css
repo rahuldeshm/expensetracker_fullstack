@@ -110,10 +110,12 @@ button:hover {
 }
 
 .forgotform {
-  display: none;
+  transform: translate(0rem, 0rem);
+  transition: 1s;
 }
 #fpp:checked ~ .forgotform {
-  display: block;
+  transform: translate(9rem, 9rem);
+  transition: 1s;
 }
 .forgotpass {
   font-size: 1rem;

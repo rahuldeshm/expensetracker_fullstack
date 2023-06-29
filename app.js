@@ -9,6 +9,7 @@ const User = require("./models/user");
 const paymentRoutes = require("./routes/payment");
 const Order = require("./models/order");
 const premiumRoutes = require("./routes/premium");
+const Forgot = require("./models/forgot");
 require("dotenv").config();
 
 const app = express();
@@ -27,6 +28,9 @@ Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
+User.hasMany(Forgot);
+Forgot.belongsTo(User);
 
 sequelize.sync().then(() => {
   app.listen(3000);
