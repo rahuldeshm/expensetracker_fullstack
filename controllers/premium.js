@@ -1,7 +1,8 @@
 const User = require("../models/user");
-const Expense = require("../models/expense");
-const { Sequelize } = require("sequelize");
-const sequelize = require("../util/database");
+const AWS = require("aws-sdk");
+// const Expense = require("../models/expense");
+// const { Sequelize } = require("sequelize");
+// const sequelize = require("../util/database");
 
 exports.getLeaderboard = async (req, res, next) => {
   if (!req.user.ispremium) {
@@ -59,4 +60,21 @@ exports.getLeaderboard = async (req, res, next) => {
   // });
   // array.sort((b, a) => a.total - b.total);
   res.status(201).json(leaderbordofuser);
+};
+
+async function uploadtoS3(data, filename) {
+  const BUCKET_NAME = "expensetracke";
+  const IAM_USER_KEY = "";
+  const IAM_USER_SECRET = "";
+}
+
+exports.getDownload = async (req, res, next) => {
+  if (!req.user.ispremium) {
+    return res.status(403).json({ err: "USER is not PREMIUM" });
+  }
+  const expenses = await req.user.getExpenses();
+  const stringified = JSON.stringify(expenses);
+  const filename = "Expense.txt";
+  const fileUrl = await uploadtoS3(stringified, filename);
+  res.status(200).json({ fileUrl, success: true });
 };

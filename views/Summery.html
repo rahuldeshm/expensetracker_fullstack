@@ -15,6 +15,9 @@
   <body>
     <div class="header">
       <h4>Expense Tracker App</h4>
+      <div>
+        <a href="expense.html"><button class="btn btn-danger">Home</button> </a>
+      </div>
     </div>
     <div class="maindiv">
       <h4>Day to Day expense</h4>
@@ -73,7 +76,11 @@
           </tr>
         </tbody>
       </table>
-      <button class="border-primary bg-primary">Download</button>
+      <button onclick="fetchDownload(event)" class="border-primary bg-primary">
+        Download
+      </button>
     </div>
+    <script src="summery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
   </body>
 </html>
