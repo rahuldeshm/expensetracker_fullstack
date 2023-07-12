@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Verify Email</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(
+          rgb(33, 6, 41),
+          rgb(94, 3, 117),
+          rgb(32, 6, 37)
+        );
+      }
+      .header {
+        color: rgb(191, 246, 248);
+        background-color: rgb(18, 1, 29);
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid wheat;
+      }
+      .mainbody {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .main {
+        width: 22rem;
+        height: 32rem;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 5px 20px 50px black;
+        background: linear-gradient(rgb(24, 3, 117), rgb(6, 6, 41));
+      }
+      .signup {
+        position: relative;
+        height: 100%;
+        width: 100%;
+      }
+      label {
+        color: #fff;
+        font-size: 2.3rem;
+        justify-content: center;
+        display: flex;
+        margin: 30px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.4s ease-in-out;
+      }
+      input {
+        width: 60%;
+        height: 20px;
+        background: #e0dede;
+        justify-content: center;
+        display: flex;
+        margin: 10px auto;
+        padding: 10px;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+      }
+      button {
+        width: 65%;
+        height: 40px;
+        background: #573b8a;
+        color: #fff;
+        justify-content: center;
+        margin: 5px auto;
+        display: block;
+        padding: 6px;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: none;
+        outline: none;
+        transition: 0.3s ease-in;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #7952c2;
+      }
+      p {
+        padding: 1rem;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <header>
+        <h4>Expense Tracker App</h4>
+      </header>
+    </div>
+    <div class="mainbody">
+      <div class="main">
+        <div class="signup">
+          <form onsubmit="submitHandler(event)">
+            <p>
+              Type Email Only if You Requested to verify email from the Expense
+              tracker.
+            </p>
+            <label aria-hidden="true">Email:</label>
+
+            <input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="email"
+              required
+            />
+
+            <button type="submit">Verify Email.</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      async function submitHandler(e) {
+        e.preventDefault();
+        try {
+          var url = window.location.href;
+          var parts = url.split("/");
+          var value = parts[parts.length - 1];
+          const res = await axios.post(
+            "http://localhost:3000/profile/verifyemailfinal",
+            {
+              email: e.target.email.value,
+              url: value,
+            }
+          );
+          console.log(res.data);
+          alert("Email Verified Successfully.");
+        } catch (err) {
+          console.log(err);
+          alert("Unable to Verify. Try again.");
+        }
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+  </body>
+</html>

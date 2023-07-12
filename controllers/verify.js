@@ -14,7 +14,7 @@ function isStringInvalid(string) {
   }
 }
 
-exports.forgot = async (req, res, next) => {
+exports.verify = async (req, res, next) => {
   try {
     const client = Sib.ApiClient.instance;
     const apiKey = client.authentications["api-key"];
@@ -25,9 +25,9 @@ exports.forgot = async (req, res, next) => {
       email: "rahuldeshmukh4545@gmail.com",
     };
     const to = [{ email: req.body.email }];
-    const subject = "Forgot Password Clicked...";
+    const subject = "Email Verification...";
     const changelink = uuidv4();
-    const htmlContent = `<h1>Click on this link to update the password.</h1><a href='http://localhost:3000/auth/resetpasspage/${changelink}' >click here</a>`;
+    const htmlContent = `<h1>Click on this link to Verify email on expense tracker.</h1><a href='http://localhost:3000/profile/verifyemail/${changelink}' >click here.</a> <p> only if you requsted verification of email</p>`;
     const userI = await User.findOne({ where: { email: req.body.email } });
 
     if (!userI) {
@@ -51,14 +51,14 @@ exports.forgot = async (req, res, next) => {
   }
 };
 
-exports.resetpasspage = async (req, res, next) => {
+exports.verifyemail = async (req, res, next) => {
   try {
     const id = req.params.resetId;
     const request = await Forgot.findByPk(id);
     if (!request || !request.isactive) {
       throw new Error({ message: "Inactive Request." });
     }
-    const filePath = path.join(__dirname, "..", "views", "resetpass.html");
+    const filePath = path.join(__dirname, "..", "views", "verify.html");
     res.sendFile(filePath);
   } catch (err) {
     res.sendFile(path.join(__dirname, "..", "views", "notfound.html"));
@@ -66,39 +66,35 @@ exports.resetpasspage = async (req, res, next) => {
   }
 };
 
-exports.resetpass = async (req, res, next) => {
+exports.verifyemailfinal = async (req, res, next) => {
   const t = await sequelize.transaction();
-  const { password, url } = req.body;
+  const { email, url } = req.body;
   try {
-    if (isStringInvalid(password) || isStringInvalid(url)) {
+    if (isStringInvalid(email) || isStringInvalid(url)) {
       throw new Error("Bad Request.");
     }
     const forgotLink = await Forgot.findOne({ where: { id: url } });
     if (!forgotLink.isactive) {
       throw new Error("Invalid Link");
     }
-    bcrypt.hash(password, 10, async (err, hash) => {
-      if (err) {
-        throw err;
-      }
-      try {
-        const promise1 = forgotLink.update(
-          { isactive: false },
-          { transaction: t }
-        );
-        const promise2 = User.update(
-          { password: hash },
-          { where: { id: forgotLink.userId } },
-          { transaction: t }
-        );
-        await Promise.all([promise1, promise2]);
-        await t.commit();
-        res.status(201).json({ message: "Password Updated Successfully" });
-      } catch (err) {
-        await t.rollback();
-        res.status(403).json({ message: err });
-      }
-    });
+
+    try {
+      const promise1 = forgotLink.update(
+        { isactive: false },
+        { transaction: t }
+      );
+      const promise2 = User.update(
+        { verified: true },
+        { where: { id: forgotLink.userId, email: email } },
+        { transaction: t }
+      );
+      await Promise.all([promise1, promise2]);
+      await t.commit();
+      res.status(201).json({ message: "Email Verified Successfully" });
+    } catch (err) {
+      await t.rollback();
+      res.status(403).json({ message: err });
+    }
   } catch (err) {
     res.status(401).json({ message: err });
   }

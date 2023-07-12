@@ -10,6 +10,7 @@ const paymentRoutes = require("./routes/payment");
 const Order = require("./models/order");
 const premiumRoutes = require("./routes/premium");
 const Forgot = require("./models/forgot");
+const profileRoutes = require("./routes/profile");
 require("dotenv").config();
 
 const app = express();
@@ -22,6 +23,7 @@ app.use("/auth", authRoutes);
 app.use("/expense", expenseRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/premium", premiumRoutes);
+app.use("/profile", profileRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

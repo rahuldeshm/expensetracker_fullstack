@@ -14,6 +14,7 @@ const User = sequelize.define("user", {
   password: Sequelize.STRING,
   ispremium: Sequelize.BOOLEAN,
   total: Sequelize.INTEGER,
+  verified: Sequelize.BOOLEAN,
 });
 
 module.exports = User;

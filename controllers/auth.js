@@ -13,12 +13,7 @@ exports.signup = async (req, res, next) => {
   try {
     const { username, email, phone, password } = req.body;
     console.log(username, email, phone, password);
-    if (
-      isStringInvalid(username) ||
-      isStringInvalid(email) ||
-      isStringInvalid(phone) ||
-      isStringInvalid(password)
-    ) {
+    if (isStringInvalid(email) || isStringInvalid(password)) {
       return res.status(400).json({ err: "bad request. something is missing" });
     } else {
       bcrypt.hash(password, 10, async (err, hash) => {
@@ -32,7 +27,21 @@ exports.signup = async (req, res, next) => {
             phone,
             password: hash,
           });
-          res.status(201).json({ id: result.id });
+
+          const token = jwt.sign(
+            { id: result.id, username: result.username },
+            process.env.token_key
+          );
+          console.log(token, result.ispremium, result.id, result.username);
+          res.json({
+            message: "Login Successful",
+            ispremium: result.ispremium,
+            displayName: result.username,
+            email: req.body.email,
+            verified: result.verified,
+            phone: result.phone,
+            idToken: token,
+          });
         } catch (err) {
           res.status(403).json(err);
         }
@@ -61,8 +70,11 @@ exports.signin = (req, res, next) => {
             res.json({
               message: "Login Successful",
               ispremium: result.ispremium,
-              username: result.username,
-              token,
+              displayName: result.username,
+              phone: result.phone,
+              email: req.body.email,
+              verified: result.verified,
+              idToken: token,
             });
           } else {
             res.status(401).json({ err: "User not authorized" });
