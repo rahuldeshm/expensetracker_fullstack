@@ -75,9 +75,15 @@ exports.addExpense = async (req, res, next) => {
         { transaction: t }
       );
       Promise.all([promise1, promise2])
-        .then(async () => {
+        .then(async ([created]) => {
           await t.commit();
-          res.json({ id: promise1.id, price, description, categary });
+          res.json({
+            id: created.id,
+            price,
+            description,
+            categary,
+            createdAt: created.createdAt,
+          });
         })
         .catch(async (err) => {
           console.log(err);

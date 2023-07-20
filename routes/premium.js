@@ -7,4 +7,5 @@ const router = express.Router();
 router.get("/leaderboard", authenticate, premium.getLeaderboard);
 
 router.get("/download", authenticate, premium.getDownload);
+router.get("/downloaded", authenticate, premium.getdownloaded);
 module.exports = router;

@@ -1,5 +1,7 @@
 const User = require("../models/user");
-const AWS = require("aws-sdk");
+const UserServices = require("../services/Userservices");
+const S3Services = require("../services/S3services");
+const Download = require("../models/FileDownloaded");
 // const Expense = require("../models/expense");
 // const { Sequelize } = require("sequelize");
 // const sequelize = require("../util/database");
@@ -62,48 +64,34 @@ exports.getLeaderboard = async (req, res, next) => {
   res.status(201).json(leaderbordofuser);
 };
 
-async function uploadtoS3(data, filename) {
-  const BUCKET_NAME = process.env.BUCKET_NAME;
-  const IAM_USER_KEY = process.env.IAM_USER_KEY;
-  const IAM_USER_SECRET = process.env.IAM_USER_SECRET;
-  let s3bucket = new AWS.S3({
-    accessKeyId: IAM_USER_KEY,
-    secretAccessKey: IAM_USER_SECRET,
-    // Bucket:BUCKET_NAME
-  });
-
-  var params = {
-    Bucket: BUCKET_NAME,
-    Key: filename,
-    Body: data,
-    ACL: "public-read",
-  };
-  return new Promise((res, rej) => {
-    s3bucket.upload(params, (err, s3response) => {
-      if (err) {
-        console.log(err);
-        rej(err);
-      } else {
-        console.log(s3response);
-        res(s3response.Location);
-      }
-    });
-  });
-}
-
 exports.getDownload = async (req, res, next) => {
   if (!req.user.ispremium) {
     return res.status(403).json({ err: "USER is not PREMIUM" });
   }
   try {
-    const expenses = await req.user.getExpenses();
+    const expenses = await UserServices.getExpenses(req, {});
     const stringified = JSON.stringify(expenses);
     const filename = `Expense${req.user.id}${new Date()}.txt`;
-    const fileUrl = await uploadtoS3(stringified, filename);
+    const fileUrl = await S3Services.uploadtoS3(stringified, filename);
     console.log(fileUrl);
+    const dowlist = await Download.create({
+      userId: req.user.id,
+      url: fileUrl,
+    });
+    console.log(dowlist);
     res.status(200).json({ fileUrl: fileUrl, success: true });
   } catch (err) {
     console.log(err);
     res.status(500).json({ fileUrl: "", success: false, err: err });
+  }
+};
+
+exports.getdownloaded = async (req, res, body) => {
+  try {
+    const alldownloads = await req.user.getDownloads();
+    res.status(200).json(alldownloads);
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({ err: "some Error occured" });
   }
 };

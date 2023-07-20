@@ -11,6 +11,7 @@ const Order = require("./models/order");
 const premiumRoutes = require("./routes/premium");
 const Forgot = require("./models/forgot");
 const profileRoutes = require("./routes/profile");
+const Download = require("./models/FileDownloaded");
 require("dotenv").config();
 
 const app = express();
@@ -33,6 +34,9 @@ Order.belongsTo(User);
 
 User.hasMany(Forgot);
 Forgot.belongsTo(User);
+
+User.hasMany(Download);
+Download.belongsTo(User);
 
 sequelize.sync().then(() => {
   app.listen(3000);
