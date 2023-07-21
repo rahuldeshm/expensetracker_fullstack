@@ -8,17 +8,27 @@ function isStringInvalid(string) {
     return false;
   }
 }
-
-exports.getExpenses = (req, res, next) => {
-  req.user
-    .getExpenses()
-    .then((rows) => {
-      res.json(rows);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
+const ONEPAGE = 9;
+exports.getExpenses = async (req, res, next) => {
+  const page = +req.query.page || 1;
+  try {
+    const count = await Expense.count({ where: { userId: req.user.id } });
+    console.log(count);
+    const rows = await req.user.getExpenses({
+      offset: (page - 1) * ONEPAGE,
+      order: [["id", "desc"]],
+      limit: ONEPAGE,
     });
+
+    res.json({
+      rows: rows,
+      totalPages: Math.ceil(count / ONEPAGE),
+      currentPage: page,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err });
+  }
 };
 
 exports.addExpense = async (req, res, next) => {
@@ -121,4 +131,16 @@ exports.deleteExpense = async (req, res, next) => {
     console.log(err);
     res.status(500).json({ error: err });
   }
+};
+
+exports.getExpenset = (req, res, next) => {
+  req.user
+    .getExpenses()
+    .then((rows) => {
+      res.json(rows);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 };
