@@ -8,12 +8,13 @@ function isStringInvalid(string) {
     return false;
   }
 }
-const ONEPAGE = 9;
+
 exports.getExpenses = async (req, res, next) => {
+  const ONEPAGE = +req.headers.perpage || 9;
   const page = +req.query.page || 1;
   try {
     const count = await Expense.count({ where: { userId: req.user.id } });
-    console.log(count);
+
     const rows = await req.user.getExpenses({
       offset: (page - 1) * ONEPAGE,
       order: [["id", "desc"]],
@@ -22,6 +23,8 @@ exports.getExpenses = async (req, res, next) => {
 
     res.json({
       rows: rows,
+      count: count,
+      perPage: ONEPAGE,
       totalPages: Math.ceil(count / ONEPAGE),
       currentPage: page,
     });
