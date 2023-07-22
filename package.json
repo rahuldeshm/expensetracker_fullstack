@@ -4,7 +4,9 @@
   "description": "This is expense tracker to track the expenses",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": " node app.js",
+    "start-server": "node app.js",
+    "start:dev": "nodemon app.js"
   },
   "author": "Rahul deshmukh",
   "license": "ISC",
@@ -15,7 +17,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0",
     "mysql2": "^3.4.0",
     "path": "^0.12.7",
     "razorpay": "^2.8.6",

@@ -12,11 +12,22 @@ const premiumRoutes = require("./routes/premium");
 const Forgot = require("./models/forgot");
 const profileRoutes = require("./routes/profile");
 const Download = require("./models/FileDownloaded");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
 
 app.use(cors());
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "accress.log"),
+  { flags: "a" }
+);
+
+app.use(helmet());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use(bodyParser.json({ extended: true }));
 
