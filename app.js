@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+require("dotenv").config();
 const sequelize = require("./util/database");
 const authRoutes = require("./routes/auth");
 const expenseRoutes = require("./routes/expense");
@@ -16,11 +17,13 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
-require("dotenv").config();
+// const https = require("https");
 
 const app = express();
 
 app.use(cors());
+// const privateKey = fs.readFileSync("server.key");
+// const certificate = fs.readFileSync("server.cert");
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "accress.log"),
   { flags: "a" }
@@ -50,5 +53,6 @@ User.hasMany(Download);
 Download.belongsTo(User);
 
 sequelize.sync().then(() => {
-  app.listen(3000);
+  // https.createServer({ key: privateKey, cert: certificate }, app).listen(3000);
+  app.listen(process.env.PORT || 3000);
 });
