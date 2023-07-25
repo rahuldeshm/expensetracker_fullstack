@@ -3,6 +3,7 @@ const User = require("./../models/user");
 
 const authenticate = (req, res, next) => {
   const token = req.headers.authorisation;
+  console.log("added cicd pipeline");
 
   try {
     const userId = jwt.verify(token, process.env.token_key);
