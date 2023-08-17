@@ -100,7 +100,7 @@
     <div class="mainbody">
       <div class="main">
         <div class="signup">
-          <form onsubmit="submitHandler(event)">
+          <form method="post">
             <label aria-hidden="true">Change Password.</label>
 
             <input
@@ -122,29 +122,5 @@
         </div>
       </div>
     </div>
-    <script>
-      async function submitHandler(e) {
-        e.preventDefault();
-        if (e.target.cpassword.value !== e.target.password.value) {
-          alert("Password and confirm password not Match");
-          return;
-        }
-        try {
-          var url = window.location.href;
-          var parts = url.split("/");
-          var value = parts[parts.length - 1];
-          const res = await axios.post("http://localhost:3000/auth/resetpass", {
-            password: e.target.password.value,
-            url: value,
-          });
-          console.log(res.data);
-          alert("Password Updated Successfully.");
-        } catch (err) {
-          console.log(err);
-          alert("Unable to update password. Try again.");
-        }
-      }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
   </body>
 </html>

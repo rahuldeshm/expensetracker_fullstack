@@ -9,6 +9,6 @@ router.post("/signup", auth.signup);
 router.post("/signin", auth.signin);
 router.post("/forgot", forgot.forgot);
 router.get("/resetpasspage/:resetId", forgot.resetpasspage);
-router.post("/resetpass", forgot.resetpass);
+router.post("/resetpasspage/:resetId", forgot.resetpass);
 
 module.exports = router;

@@ -4,7 +4,7 @@ const Forgot = require("../models/forgot");
 const User = require("../models/user");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const sequelize = require("../util/database");
+const { default: mongoose } = require("mongoose");
 
 function isStringInvalid(string) {
   if (string == undefined || string.length == 0) {
@@ -27,18 +27,15 @@ exports.forgot = async (req, res, next) => {
     const to = [{ email: req.body.email }];
     const subject = "Forgot Password Clicked...";
     const changelink = uuidv4();
-    const htmlContent = `<h1>Click on this link to update the password.</h1><a href='http://localhost:3000/auth/resetpasspage/${changelink}' >click here</a>`;
-    const userI = await User.findOne({ where: { email: req.body.email } });
+    const htmlContent = `<h1>Click on this link to update the password.</h1><a href='http://localhost:3001/auth/resetpasspage/${changelink}' >click here</a>`;
+    const userI = await User.findOne({ email: req.body.email });
 
     if (!userI) {
       throw new Error("USER NOT FOUND");
     }
     const userId = userI.id;
-    const forgot = await Forgot.create({
-      id: changelink,
-      userId,
-      isactive: true,
-    });
+    const forgot = new Forgot({ id: changelink, userId, isactive: true });
+    await forgot.save();
     const resp = await tranEmailApi.sendTransacEmail({
       sender,
       to,
@@ -47,6 +44,7 @@ exports.forgot = async (req, res, next) => {
     });
     res.status(201).json({ message: "email send successfully" });
   } catch (err) {
+    console.log(err);
     res.status(404).json({ message: err, err: err.message });
   }
 };
@@ -54,8 +52,8 @@ exports.forgot = async (req, res, next) => {
 exports.resetpasspage = async (req, res, next) => {
   try {
     const id = req.params.resetId;
-    const request = await Forgot.findByPk(id);
-    if (!request || !request.isactive) {
+    const request = await Forgot.find({ id: id }).exec();
+    if (!request[0] || !request[0].isactive) {
       throw new Error({ message: "Inactive Request." });
     }
     const filePath = path.join(__dirname, "..", "views", "resetpass.html");
@@ -67,13 +65,17 @@ exports.resetpasspage = async (req, res, next) => {
 };
 
 exports.resetpass = async (req, res, next) => {
-  const t = await sequelize.transaction();
-  const { password, url } = req.body;
+  const url = req.params.resetId;
+  const password = req.body.password;
+  const confirmPassword = req.body.cpassword;
   try {
     if (isStringInvalid(password) || isStringInvalid(url)) {
       throw new Error("Bad Request.");
     }
-    const forgotLink = await Forgot.findOne({ where: { id: url } });
+    if (password !== confirmPassword) {
+      throw new Error("Bad Request.");
+    }
+    const forgotLink = await Forgot.findOne({ id: url }).exec();
     if (!forgotLink.isactive) {
       throw new Error("Invalid Link");
     }
@@ -81,25 +83,30 @@ exports.resetpass = async (req, res, next) => {
       if (err) {
         throw err;
       }
+      const session = await mongoose.startSession();
       try {
-        const promise1 = forgotLink.update(
-          { isactive: false },
-          { transaction: t }
-        );
-        const promise2 = User.update(
-          { password: hash },
-          { where: { id: forgotLink.userId } },
-          { transaction: t }
-        );
+        session.startTransaction();
+        const promise1 = Forgot.updateOne(
+          { id: url },
+          { isactive: false }
+        ).session(session);
+        const promise2 = User.updateOne(
+          { _id: forgotLink.userId },
+          { password: hash }
+        ).session(session);
         await Promise.all([promise1, promise2]);
-        await t.commit();
+        await session.commitTransaction();
+        session.endSession();
         res.status(201).json({ message: "Password Updated Successfully" });
       } catch (err) {
-        await t.rollback();
+        console.log(err);
+        await session.abortTransaction();
+        session.endSession;
         res.status(403).json({ message: err });
       }
     });
   } catch (err) {
+    console.log(err, ">>>>>>>");
     res.status(401).json({ message: err });
   }
 };

@@ -12,7 +12,7 @@ function isStringInvalid(string) {
 exports.signup = async (req, res, next) => {
   try {
     const { username, email, phone, password } = req.body;
-    console.log(username, email, phone, password);
+
     if (isStringInvalid(email) || isStringInvalid(password)) {
       return res.status(400).json({ err: "bad request. something is missing" });
     } else {
@@ -21,18 +21,13 @@ exports.signup = async (req, res, next) => {
           throw err;
         }
         try {
-          const result = await User.create({
-            username,
-            email,
-            phone,
-            password: hash,
-          });
-
+          const user = new User({ username, email, phone, password: hash });
+          console.log(username, email, phone, password);
+          const result = await user.save();
           const token = jwt.sign(
             { id: result.id, username: result.username },
             process.env.token_key
           );
-          console.log(token, result.ispremium, result.id, result.username);
           res.json({
             message: "Login Successful",
             ispremium: result.ispremium,
@@ -43,6 +38,7 @@ exports.signup = async (req, res, next) => {
             idToken: token,
           });
         } catch (err) {
+          console.log(err);
           res.status(403).json(err);
         }
       });
@@ -53,7 +49,7 @@ exports.signup = async (req, res, next) => {
 };
 
 exports.signin = (req, res, next) => {
-  User.findOne({ where: { email: req.body.email } }).then((result) => {
+  User.findOne({ email: req.body.email }).then((result) => {
     if (result) {
       bcrypt.compare(
         req.body.password,

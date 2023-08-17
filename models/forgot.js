@@ -1,10 +1,11 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../util/database");
+const { default: mongoose } = require("mongoose");
 
-const Forgot = sequelize.define("forgot", {
-  id: { type: Sequelize.STRING, primaryKey: true },
-  userId: Sequelize.INTEGER,
-  isactive: Sequelize.BOOLEAN,
+const Schema = mongoose.Schema;
+
+const forgotSchema = new Schema({
+  id: String,
+  userId: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+  isactive: Boolean,
 });
 
-module.exports = Forgot;
+module.exports = mongoose.model("Forgot", forgotSchema);
