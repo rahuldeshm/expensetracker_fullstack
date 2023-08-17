@@ -8,7 +8,7 @@ const path = require("path");
 require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const mongoose = require("mongoose");
-// const expenseRoutes = require("./routes/expense");
+const expenseRoutes = require("./routes/expense");
 // const paymentRoutes = require("./routes/payment");
 // const premiumRoutes = require("./routes/premium");
 // const profileRoutes = require("./routes/profile");
@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));
 
 app.use("/auth", authRoutes);
-// app.use("/expense", expenseRoutes);
+app.use("/expense", expenseRoutes);
 // app.use("/payment", paymentRoutes);
 // app.use("/premium", premiumRoutes);
 // app.use("/profile", profileRoutes);

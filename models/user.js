@@ -10,7 +10,30 @@ const userSchema = new Schema({
   ispremium: Boolean,
   total: Number,
   verified: Boolean,
-  expenses: [],
+  expenses: [
+    {
+      expenseId: {
+        type: Schema.Types.ObjectId,
+        ref: "Expense",
+        required: true,
+      },
+    },
+  ],
 });
-
+userSchema.methods.updateTotalNew = function (total) {
+  this.total = total.total;
+  this.expenses = [...this.expenses, { expenseId: total.expenseId }];
+  return this.save();
+};
+userSchema.methods.updateTotalDelete = function (total) {
+  this.total = total.total;
+  this.expenses = [...this.expenses].filter(
+    (e) => e.expenseId.toString() !== total.expenseId.toString()
+  );
+  return this.save();
+};
+userSchema.methods.updateTotalEdit = function (total) {
+  this.total = total.total;
+  return this.save();
+};
 module.exports = mongoose.model("User", userSchema);

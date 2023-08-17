@@ -1,5 +1,4 @@
 const Expense = require("../models/expense");
-const sequelize = require("../util/database");
 
 function isStringInvalid(string) {
   if (string == undefined || string.length == 0) {
@@ -13,13 +12,13 @@ exports.getExpenses = async (req, res, next) => {
   const ONEPAGE = +req.headers.perpage || 9;
   const page = +req.query.page || 1;
   try {
-    const count = await Expense.count({ where: { userId: req.user.id } });
+    const count = await Expense.count({ userId: req.user._id });
 
-    const rows = await req.user.getExpenses({
-      offset: (page - 1) * ONEPAGE,
-      order: [["id", "desc"]],
-      limit: ONEPAGE,
-    });
+    const rows = await Expense.find({
+      userId: req.user._id,
+    })
+      .limit(ONEPAGE)
+      .exec();
 
     res.json({
       rows: rows,
@@ -35,7 +34,6 @@ exports.getExpenses = async (req, res, next) => {
 };
 
 exports.addExpense = async (req, res, next) => {
-  const t = await sequelize.transaction();
   const { id, price, description, categary } = req.body;
   if (
     isStringInvalid(price) ||
@@ -47,90 +45,65 @@ exports.addExpense = async (req, res, next) => {
 
   try {
     if (!!id) {
-      const expense = await Expense.findByPk(id);
-      console.log("this is running updating");
+      const expense = await Expense.findOne({ _id: id }).exec();
+
+      await Expense.updateOne(
+        { _id: id },
+        { price, description, categary }
+      ).exec();
 
       const preprice = expense.price;
       const totalexpense =
         parseInt(req.user.total) - parseInt(preprice) + parseInt(price);
-      expense.price = price;
-      expense.description = description;
-      expense.categary = categary;
-      const promise1 = expense.save({ transaction: t });
-      const promise2 = req.user.update(
-        { total: totalexpense },
-        { transaction: t }
-      );
-      Promise.all([promise1, promise2])
-        .then(async () => {
-          await t.commit();
-          res.json({ id, price, description, categary });
-        })
-        .catch(async (err) => {
-          await t.rollback();
-          throw new Error("something went wrong while updating in database");
-        });
+      await req.user.updateTotalEdit({ total: totalexpense });
+
+      res.json({ id, price, description, categary });
     } else {
       console.log("new here");
-      const promise1 = Expense.create(
-        {
-          price,
-          description,
-          categary,
-          userId: req.user.id,
-        },
-        { transaction: t }
-      );
+      const pro = new Expense({
+        price,
+        description,
+        categary,
+        userId: req.user._id,
+      });
+      const promise1 = await pro.save();
       const totalexpense =
         (req.user.total ? parseInt(req.user.total) : 0) + parseInt(price);
-      const promise2 = req.user.update(
-        { total: totalexpense },
-        { transaction: t }
-      );
-      Promise.all([promise1, promise2])
-        .then(async ([created]) => {
-          await t.commit();
-          res.json({
-            id: created.id,
-            price,
-            description,
-            categary,
-            createdAt: created.createdAt,
-          });
-        })
-        .catch(async (err) => {
-          console.log(err);
-          await t.rollback();
-          throw new Error("something went wrong while updating in database");
-        });
+      const promise2 = req.user.updateTotalNew({
+        total: totalexpense,
+        expenseId: promise1._id,
+      });
+      res.json({
+        id: promise1.id,
+        price,
+        description,
+        categary,
+        createdAt: promise1.createdAt,
+      });
     }
   } catch (err) {
-    console.log("outererr");
-    await t.rollback();
+    console.log("outererr", err);
     res.status(500).json({ error: err });
   }
 };
 
 exports.deleteExpense = async (req, res, next) => {
   try {
-    const t = await sequelize.transaction();
     const prodId = req.params.userId;
     const expensetotal = parseInt(req.user.total) - parseInt(req.headers.price);
-    await req.user.update({ total: expensetotal }, { transaction: t });
-
-    const rows = await Expense.destroy({
-      where: { id: prodId, userId: req.user.id },
-      transaction: t,
+    await req.user.updateTotalDelete({
+      total: expensetotal,
+      expenseId: prodId,
+    });
+    const rows = await Expense.deleteOne({
+      _id: prodId,
     });
 
-    await t.commit();
     console.log("sussfully deleted", rows);
     res.json({
-      message: "success",
+      message: "successfully DELETED ",
     });
   } catch (err) {
-    console.log("firsterr");
-    await t.rollback();
     console.log(err);
     res.status(500).json({ error: err });
   }
@@ -138,9 +111,9 @@ exports.deleteExpense = async (req, res, next) => {
 
 exports.getExpenset = (req, res, next) => {
   req.user
-    .getExpenses()
+    .populate("expenses.expenseId")
     .then((rows) => {
-      res.json(rows);
+      res.json(rows.expenses);
     })
     .catch((err) => {
       console.log(err);
